@@ -1,5 +1,9 @@
 # darts-scorer-core
 
+[![Build Status](https://travis-ci.org/bogwro/darts-scorer-core.svg?branch=master)](https://travis-ci.org/bogwro/darts-scorer-core)
+[![npm](https://img.shields.io/npm/v/darts-scorer-core.svg)](https://www.npmjs.com/package/darts-scorer-core)
+![Documentation Coverage](./dist/docs/badge.svg)
+
 > This is a core module for building Darts games and front-end.
 
 It is easy to extend to match own needs.
