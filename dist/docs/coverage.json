@@ -1,0 +1,32 @@
+{
+  "coverage": "100%",
+  "expectCount": 53,
+  "actualCount": 53,
+  "files": {
+    "src/games/501.js": {
+      "expectCount": 9,
+      "actualCount": 9,
+      "undocumentLines": []
+    },
+    "src/games/dartsBaseGame.js": {
+      "expectCount": 16,
+      "actualCount": 16,
+      "undocumentLines": []
+    },
+    "src/player.js": {
+      "expectCount": 4,
+      "actualCount": 4,
+      "undocumentLines": []
+    },
+    "src/round.js": {
+      "expectCount": 13,
+      "actualCount": 13,
+      "undocumentLines": []
+    },
+    "src/throw.js": {
+      "expectCount": 11,
+      "actualCount": 11,
+      "undocumentLines": []
+    }
+  }
+}

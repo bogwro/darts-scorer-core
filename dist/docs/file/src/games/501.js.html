@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/games/501.js | API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <a data-ice="repoURL" href="https://github.com/bogwro/darts-scorer-core.git" class="repo-url-github">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/player.js~Player.html">Player</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/round.js~Round.html">Round</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/throw.js~Throw.html">Throw</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">games</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/games/501.js~Darts501Game.html">Darts501Game</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/games/dartsBaseGame.js~DartsBaseGame.html">DartsBaseGame</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/games/501.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import DartsBaseGame from &apos;./dartsBaseGame&apos;;
+
+/**
+ * Class representing a 501 Game
+ *
+ * @class Darts501Game
+ */
+export default class Darts501Game extends DartsBaseGame {
+
+  static defaultOptions = {
+    startingPoints: 501,
+    doubleIn: false,
+    doubleOut: true
+  };
+
+  /**
+   * Initializes a new instance of the `Darts501Game` class.
+   *
+   * @constructs Darts501Game
+   * @param {Player[]} players An array of players.
+   * @param {Object} [options={}] The options object
+   *
+   * @example
+   * // Creating the new instance
+   * var game = new Darts501Game([new Player({name: &apos;Player 1&apos;}), new Player({name: &apos;Player 2&apos;})]);
+   *
+   */
+  constructor(players, options = {}) {
+    let opts = Object.assign({}, Darts501Game.defaultOptions, options);
+    super(players, opts);
+  }
+
+  /**
+   * Determines whether option `doubleIn` is set to `true` or `false`.
+   *
+   * @returns {boolean} If `true` it will affect game specific logic.
+   */
+  get doubleIn() {
+    return this._options.doubleIn;
+  }
+
+  /**
+   * Determines whether option `doubleOut` is set to `true` or `false`.
+   *
+   * @returns {boolean} If `true` it will affect game specific logic.
+   */
+  get doubleOut() {
+    return this._options.doubleOut;
+  }
+
+  /**
+   * Represents single `throw`.
+   *
+   * @param {number} num Number between 0 and 20 plus 25 (bull)
+   * @param {number} [multiplier=1] Multiplier is between 1 and 3 for all of the numbers but 25 (which has only x2 multiplier).
+   * @returns {Throw} `Throw` instance.
+   */
+  throw(num, multiplier = 1) {
+    let currentThrow = super.throw(num, multiplier);
+
+    if(this.currentPlayerTotalPoints === 0) {
+      if(this.doubleOut) {
+        if(multiplier === 2) {
+          this.currentPlayer.winner = true;
+        } else {
+          this.invalidateRound(this.currentRound);
+        }
+      } else {
+        this.currentPlayer.winner = true;
+      }
+    }
+
+    if(this.currentPlayerTotalPoints &lt; 0) {
+      this.invalidateRound(this.currentRound);
+    }
+
+    if(num &amp;&amp; this.doubleIn &amp;&amp; (this.currentPlayerTotalPoints + num * multiplier) === this.startingPoints &amp;&amp; multiplier !== 2) {
+      this.invalidateThrow(currentThrow);
+    }
+
+    if(this.doubleOut &amp;&amp; this.currentPlayerTotalPoints === 1) {
+      this.invalidateRound(this.currentRound);
+    }
+
+    return currentThrow;
+
+  }
+
+  /**
+   * @returns {number} Calculates points for `currentRound`
+   */
+  get currentRoundPoints() {
+    return Array.from(this.currentRound.throws).reduce((prev, curr) =&gt; prev + curr.number * curr.multiplier, 0);
+  }
+
+  /**
+   * @returns {number} Calculates total points for `currentPlayer`
+   */
+  get currentPlayerTotalPoints() {
+    return this.getPointsByPlayer(this.currentPlayer);
+  }
+
+  /**
+   * Calculates total points for specific player.
+   *
+   * @param {Player} player Instance of the `Player` class.
+   * @returns {number} Total points.
+   */
+  getPointsByPlayer(player) {
+    return this.startingPoints - this.throwsByPlayer(player).reduce((prev, curr) =&gt; prev + curr.number * curr.multiplier, 0);
+  }
+
+  /**
+   * @returns {Number} Points that game starts with.
+   */
+  get startingPoints() {
+    return parseInt(this._options.startingPoints, 10);
+  }
+
+}
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.4.3)</span></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

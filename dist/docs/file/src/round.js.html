@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">src/round.js | API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <a data-ice="repoURL" href="https://github.com/bogwro/darts-scorer-core.git" class="repo-url-github">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/player.js~Player.html">Player</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/round.js~Round.html">Round</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/throw.js~Throw.html">Throw</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">games</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/games/501.js~Darts501Game.html">Darts501Game</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/games/dartsBaseGame.js~DartsBaseGame.html">DartsBaseGame</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/round.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import Throw from &apos;./throw&apos;;
+
+/**
+ * Class representing a round.
+ *
+ * @class Round
+ */
+export default class Round {
+
+  _throws = new Set();
+
+  /**
+   * @property {Object} defaultOptions Default options
+   * @property {number} defaultOptions.throwsPerRound The default number of throws per round.
+   *
+   */
+  defaultOptions = {
+    throwsPerRound: 3
+  };
+
+  /**
+   * Initializes a new instance of the `Round` class.
+   *
+   * @constructs Round
+   * @param {Object} [options={}] The options object
+   *
+   * @example
+   * var round = new Round();
+   *
+   * round.throw(20, 3);
+   * round.throw(20, 3);
+   * round.throw(20, 3);
+   *
+   * round.isDone //&gt; `true`
+   */
+  constructor(options = {}) {
+    this._options = Object.assign({}, this.defaultOptions, options);
+  }
+
+  /**
+   * @returns {number} Number of throws per round.
+   */
+  get size() {
+    return this._throws.size;
+  }
+
+  /**
+   * @returns {Object} Options object.
+   */
+  get options() {
+    return this._options;
+  }
+
+  /**
+   * Represents single `throw`.
+   *
+   * @param {number} num Number between 0 and 20 plus 25 (bull)
+   * @param {number} [multiplier=1] Multiplier is between 1 and 3 for all of the numbers but 25 (which has only x2 multiplier).
+   * @returns {Throw} `Throw` instance.
+   */
+  throw(num, multiplier) {
+    if(this.size &lt; this.options.throwsPerRound) {
+      let throwInstance = new Throw(num, multiplier);
+
+      this._throws.add(throwInstance);
+
+      return throwInstance;
+    } else {
+      return false;
+    }
+  }
+
+  /**
+   * Removes last throw from the round.
+   *
+   * @returns {boolean} Returns `true` or `false`.
+   */
+  pop() {
+    return this._throws.delete(Array.from(this._throws).pop());
+  }
+
+  /**
+   * @returns {Number} Getter option `throwsPerRound`.
+   */
+  get throwsPerRound() {
+    return parseInt(this._options.throwsPerRound, 10);
+  }
+
+  /**
+   * Clear all throws for the round.
+   */
+  clear() {
+    this._throws.clear();
+  }
+
+  /**
+   * @returns {boolean} `true` if `size` equals `0`. Otherwise `false`.
+   */
+  get isEmpty() {
+    return this.size === 0;
+  }
+
+  /**
+   * @returns {boolean} `true` if `size` equals `throwsPerRound`. Otherwise `false`.
+   */
+  get isDone() {
+    return this.size === this.throwsPerRound;
+  }
+
+  /**
+   * @returns {Set} Throws
+   */
+  get throws() {
+    return this._throws;
+  }
+
+  /**
+   * Invalidates whole round with specific `number` and `multiplier`.
+   *
+   * @param {number} number Number between 0 and 20 plus 25 (bull)
+   * @param {number} [multiplier=1] Multiplier is between 1 and 3 for all of the numbers but 25 (which has only x2 multiplier).
+   */
+  invalidate(number = 0, multiplier = 1) {
+    this.clear();
+    while(this.size &lt; this.throwsPerRound) {
+      this.throw(number, multiplier);
+    }
+  }
+
+  /**
+   * @returns {string} `String` representation of the `Round`.
+   */
+  toString() {
+    return Array.from(this._throws).toString();
+  }
+
+}
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.4.3)</span></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

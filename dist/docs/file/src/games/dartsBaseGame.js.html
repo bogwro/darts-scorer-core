@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/games/dartsBaseGame.js | API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <a data-ice="repoURL" href="https://github.com/bogwro/darts-scorer-core.git" class="repo-url-github">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/player.js~Player.html">Player</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/round.js~Round.html">Round</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/throw.js~Throw.html">Throw</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">games</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/games/501.js~Darts501Game.html">Darts501Game</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/games/dartsBaseGame.js~DartsBaseGame.html">DartsBaseGame</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/games/dartsBaseGame.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import Round from &apos;../round&apos;;
+
+/**
+ * Provides all the logic to create multiplier games based on this class
+ *
+ * @class DartsBaseGame
+ */
+export default class DartsBaseGame {
+
+  /**
+   * @static
+   * @property {Object} defaultOptions
+   * @property {Boolean} defaultOptions.isComputer
+   */
+  static defaultOptions = {
+    round: {
+      throwsPerRound: 3
+    }
+  };
+
+  _players = new Set();
+  _playerRounds = new Map();
+
+  _currentRoundNumber = 0;
+  _currentPlayer = null;
+
+  /**
+   * Initializes a new instance of the `DartsBaseGame` class.
+   *
+   * @param {Player[]} players Collection of players.
+   * @param {Object} [options={}] Options.
+   */
+  constructor(players, options = {}) {
+    if(!players || !players.length) {
+      throw Error(&apos;No players provided&apos;);
+    }
+
+    this.addPlayers(players);
+    this._options = Object.assign({}, DartsBaseGame.defaultOptions, options);
+
+    this._playersIterator = this._players[Symbol.iterator]();
+    let data = this._playersIterator.next();
+    this._currentPlayer = data.value;
+    this.nextRound();
+  }
+
+  /**
+   * Represents single `throw`. Delegates its execution to the `currentRound` object.
+   *
+   * @param {number} num Number between 0 and 20 plus 25 (bull)
+   * @param {number} [multiplier=1] Multiplier is between 1 and 3 for all of the numbers but 25 (which has only x2 multiplier).
+   * @returns {Throw} `Throw` instance.
+   */
+  throw(num, multiplier = 1) {
+    return this.currentRound.throw(num, multiplier);
+  }
+
+  /**
+   * Invalidates specific round.
+   *
+   * @param {Round} round `Round` instance.
+   */
+  invalidateRound(round) {
+    round.invalidate();
+  }
+
+  /**
+   * Invalidates specific `throw`.
+   *
+   * @param {Throw} dartsThrow `Throw` instance.
+   */
+  invalidateThrow(dartsThrow) {
+    dartsThrow.number = 0;
+    dartsThrow.multiplier = 1;
+  }
+
+  /**
+   * Sets `currentPlayer` to the next one.
+   * @returns {Player} Returns player.
+   */
+  nextPlayer() {
+    let data = this._playersIterator.next();
+
+    if(data.done) {
+      this._playersIterator = this._players[Symbol.iterator]();
+      this.nextRound();
+      return this.nextPlayer();
+    }
+
+    this._currentPlayer = data.value;
+    return this._currentPlayer;
+  }
+
+  /**
+   * Creates new instance of the `Round` for each player.
+   */
+  nextRound() {
+    let round;
+
+    for(let player of this._players) {
+      round = new Round(this._options.round);
+      this._playerRounds.get(player).get(&apos;rounds&apos;).add(round);
+      this._playerRounds.get(player).set(&apos;currentRound&apos;, round);
+    }
+
+    this._currentRoundNumber++;
+  }
+
+  /**
+   * Adds a player to the game.
+   *
+   * @param {Player} player Instance of `Player` class.
+   */
+  addPlayer(player) {
+    this._players.add(player);
+    this._playerRounds.set(player, new Map().set(&apos;rounds&apos;, new Set()));
+  }
+
+  /**
+   * Add multiple players to the game.
+   *
+   * @param {Player[]} players Array of players.
+   */
+  addPlayers(players) {
+    for(let player of players) {
+      this.addPlayer(player);
+    }
+  }
+
+  /**
+   * @returns {Player[]} Array of players.
+   */
+  get players() {
+    return Array.from(this._players);
+  }
+
+  /**
+   * @returns {number} Throws per round.
+   */
+  get throwsPerRound() {
+    return this._options.round.throwsPerRound;
+  }
+
+  /**
+   * @returns {Player} Return `Player`
+   */
+  get currentPlayer() {
+    return this._currentPlayer;
+  }
+
+  /**
+   * @returns {Round} Return `Round`.
+   */
+  get currentRound() {
+    return this._playerRounds.get(this.currentPlayer).get(&apos;currentRound&apos;);
+  }
+
+  /**
+   * @returns {number} Round number.
+   */
+  get currentRoundNumber() {
+    return this._currentRoundNumber;
+  }
+
+  /**
+   * @param {Player} player Instance of the `Player`.
+   * @returns {Round[]} Array of rounds.
+   */
+  roundsByPlayer(player) {
+    return Array.from(this._playerRounds.get(player).get(&apos;rounds&apos;));
+  }
+
+  /**
+   * @param {Player} player Instance of the `Player`.
+   * @returns {Throw[]} Array of `Throw` instances.
+   */
+  throwsByPlayer(player) {
+    return this.roundsByPlayer(player).reduce((prev, curr) =&gt; {
+      return prev.concat(Array.from(curr.throws));
+    }, []);
+  }
+
+}
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.4.3)</span></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>
