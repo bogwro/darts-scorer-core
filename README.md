@@ -4,6 +4,8 @@
 [![Code Coverage](https://codecov.io/github/bogwro/darts-scorer-core/coverage.svg?branch=master)](https://codecov.io/github/bogwro/darts-scorer-core?branch=master)
 [![Documentation Coverage](https://doc.esdoc.org/github.com/bogwro/darts-scorer-core/badge.svg)](https://doc.esdoc.org/github.com/bogwro/darts-scorer-core/)
 [![npm](https://img.shields.io/npm/v/darts-scorer-core.svg)](https://www.npmjs.com/package/darts-scorer-core)
+[![Dependency Status](https://david-dm.org/bogwro/darts-scorer-core.svg)](https://david-dm.org/bogwro/darts-scorer-core)
+[![devDependency Status](https://david-dm.org/bogwro/darts-scorer-core/dev-status.svg)](https://david-dm.org/bogwro/darts-scorer-core#info=devDependencies)
 
 > This is a core module for building Darts games and front-end.
 
