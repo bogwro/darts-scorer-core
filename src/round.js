@@ -131,7 +131,7 @@ export default class Round {
    * @returns {string} `String` representation of the `Round`.
    */
   toString() {
-    return Array.from(this._throws).toString();
+    return Array.from(this._throws).join('-');
   }
 
 }
