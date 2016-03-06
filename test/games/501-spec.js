@@ -166,5 +166,63 @@ describe('Game "501"', () => {
     assert.strictEqual(player1.winner, true);
   });
 
+  it('one dart finishes', () => {
+    let hints = game.getCheckoutHint(2);
+
+    assert.lengthOf(hints, 1);
+    assert.strictEqual(hints[0][0].number, 1);
+    assert.strictEqual(hints[0][0].multiplier, 2);
+  });
+
+
+  it('two dart finishes', () => {
+    let hints = game.getCheckoutHint(3);
+
+    assert.lengthOf(hints, 1);
+    assert.strictEqual(hints[0][0].number, 1);
+    assert.strictEqual(hints[0][0].multiplier, 1);
+  });
+
+  it('three dart finishes', () => {
+    let hints = game.getCheckoutHint(170);
+
+    assert.lengthOf(hints, 1);
+
+    assert.strictEqual(hints[0][0].number, 20);
+    assert.strictEqual(hints[0][0].multiplier, 3);
+
+    assert.strictEqual(hints[0][1].number, 20);
+    assert.strictEqual(hints[0][1].multiplier, 3);
+
+    assert.strictEqual(hints[0][2].number, 25);
+    assert.strictEqual(hints[0][2].multiplier, 2);
+  });
+
+  it('two darts finishes (leftThrows = 2)', () => {
+    let hints = game.getCheckoutHint(100, 2);
+
+    assert.lengthOf(hints, 2);
+
+    assert.strictEqual(hints[0][0].number, 20);
+    assert.strictEqual(hints[0][0].multiplier, 3);
+
+    assert.strictEqual(hints[0][1].number, 20);
+    assert.strictEqual(hints[0][1].multiplier, 2);
+
+  });
+
+  it('two darts finishes (leftThrows = 2)', () => {
+    let hints = game.getCheckoutHint(79, 2);
+
+    assert.lengthOf(hints, 4);
+
+    assert.strictEqual(hints[0][0].number, 13);
+    assert.strictEqual(hints[0][0].multiplier, 3);
+
+    assert.strictEqual(hints[0][1].number, 20);
+    assert.strictEqual(hints[0][1].multiplier, 2);
+
+  });
+
 
 });

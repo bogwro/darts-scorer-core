@@ -1,4 +1,5 @@
 import DartsBaseGame from './dartsBaseGame';
+import Throw from '../throw';
 
 /**
  * Class representing a 501 Game
@@ -115,6 +116,69 @@ export default class Darts501Game extends DartsBaseGame {
    */
   get startingPoints() {
     return parseInt(this._options.startingPoints, 10);
+  }
+
+  /**
+   * Calculates step-by-step throws to check-out in the same round.
+   *
+   * @param {number} points Total number of points left.
+   * @param {number} leftThrows Number of throws.
+   * @returns {Array} Array of possible throws as string.
+   */
+  getCheckoutHint(points, leftThrows = 3) {
+    let results = [];
+
+    let possibleThrows = [];
+
+    let singles = [];
+    let doubles = [];
+    let triples = [];
+
+    let num = 20;
+
+    let getPoints = (throwInstance) => {
+      return throwInstance.number * throwInstance.multiplier;
+    }
+
+    while(num > 0) {
+      singles.push(new Throw(num));
+      doubles.push(new Throw(num, 2));
+      triples.push(new Throw(num, 3));
+
+      num --;
+    }
+
+    singles.push(new Throw(25));
+    doubles.push(new Throw(25, 2));
+
+    possibleThrows = possibleThrows.concat(singles, doubles, triples);
+
+    for(let double of doubles) {
+
+      if(points === getPoints(double)) {
+        results.push([double]);
+      }
+
+      if(leftThrows > 1) {
+        for(let possibleThrow of possibleThrows) {
+
+          if(getPoints(possibleThrow) + getPoints(double) === points) {
+            results.push([possibleThrow, double]);
+          }
+
+          if(leftThrows > 2) {
+
+            for(let possibleThrow2 of possibleThrows) {
+              if (getPoints(possibleThrow) + getPoints(possibleThrow2) + getPoints(double) === points) {
+                results.push([possibleThrow2, possibleThrow, double]);
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return results;
   }
 
 }
