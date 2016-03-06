@@ -37,7 +37,7 @@ describe('Round', () => {
 
     assert.isFunction(round.toString);
 
-    assert.equal(round.toString(), "10,1,10,2,10,3");
+    assert.equal(round.toString(), 'S10-D10-T10');
 
   });
 

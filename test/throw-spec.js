@@ -59,9 +59,43 @@ describe('Throw', () => {
     assert.instanceOf(throwFromFactory, Throw);
   });
 
-  it('toString() is defined', () => {
+
+  it('has factory function "fromString"', () => {
+    _throw = Throw.fromString('T20');
+
+    assert.instanceOf(_throw, Throw);
+    assert.strictEqual(_throw.toString(), 'T20');
+    assert.strictEqual(_throw._number, 20);
+    assert.strictEqual(_throw._multiplier, 3);
+  });
+
+
+  it('toString() behaves correctly', () => {
     assert.isFunction(_throw.toString);
-    assert.strictEqual(_throw.toString(), '20,3');
+
+    assert.strictEqual(_throw.toString(), 'T20');
+
+    _throw = new Throw(25);
+    assert.strictEqual(_throw.toString(), 'SB');
+
+    _throw = new Throw(25, 2);
+    assert.strictEqual(_throw.toString(), 'DB');
+
+  });
+
+  it('has multiplierAsString property defined', () => {
+    assert.isDefined(_throw.multiplierAsString);
+  });
+
+  it('represents multiplier number as string', () => {
+    _throw = new Throw(1);
+    assert.strictEqual(_throw.multiplierAsString, 'S');
+
+    _throw = new Throw(1, 2);
+    assert.strictEqual(_throw.multiplierAsString, 'D');
+
+    _throw = new Throw(1, 3);
+    assert.strictEqual(_throw.multiplierAsString, 'T');
   });
 
 });

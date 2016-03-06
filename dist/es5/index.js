@@ -4,8 +4,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-require('babel-polyfill');
-
 var _player = require('./player');
 
 var _player2 = _interopRequireDefault(_player);

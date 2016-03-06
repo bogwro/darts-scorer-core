@@ -29,6 +29,26 @@ export default class Throw {
   }
 
   /**
+   * Factory function.
+   *
+   * @param {string} str String representing the throw
+   * @returns {Throw} Instance of the `Throw` class.
+   *
+   * @example
+   * let throwInstance1 = Throw.fromString('T20'); // triple 20
+   * let throwInstance2 = Throw.fromString('S15'); // single 15
+   * let throwInstance3 = Throw.fromString('DB'); // double Bull
+   */
+  static fromString(str) {
+    let regExp = /(S|D|T)(\d{1,2}|B)/ig
+    let [, multiplierStr, num] = regExp.exec(str);
+    let multiplierMap = new Map([['S', 1], ['D', 2], ['T', 3]]);
+    let multiplier = multiplierMap.get(multiplierStr);
+
+    return Throw.create(num, multiplier);
+  }
+
+  /**
    * @returns {Number} Getter `number`.
    */
   get number() {
@@ -80,10 +100,23 @@ export default class Throw {
   }
 
   /**
+   * Returns one of the followings: 'S' (single) or 'D' (double) or 'T' (triple)
+   * @returns {number} String representing `multiplier`
+   * @example
+   * let throwInstance = new Throw(10, 2);
+   * throwInstance.multiplierAsString //=> 'D'
+   */
+  get multiplierAsString() {
+    let map = new Map([[1, 'S'], [2, 'D'], [3, 'T']]);
+    return map.get(this.multiplier);
+  }
+
+  /**
    * @returns {string} `String` representation of the `Throw` instance.
    */
   toString() {
-    return [this.number, this.multiplier].toString();
+    let val = this._number === 25 ? 'B' : this._number;
+    return `${this.multiplierAsString}${val}`;
   }
 
 }

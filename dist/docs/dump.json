@@ -986,7 +986,7 @@
     "access": null,
     "description": null,
     "lineNumber": 1,
-    "content": "import 'babel-polyfill';\n\nimport Player from './player';\nimport Darts501Game from './games/501';\n\nexport default {\n  Player,\n  games: {\n    Darts501Game\n  }\n};\n"
+    "content": "import Player from './player';\nimport Darts501Game from './games/501';\n\nexport default {\n  Player,\n  games: {\n    Darts501Game\n  }\n};\n"
   },
   {
     "__docId__": 34,
