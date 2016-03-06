@@ -10,7 +10,7 @@
     "access": null,
     "description": null,
     "lineNumber": 1,
-    "content": "import DartsBaseGame from './dartsBaseGame';\n\n/**\n * Class representing a 501 Game\n *\n * @class Darts501Game\n */\nexport default class Darts501Game extends DartsBaseGame {\n\n  static defaultOptions = {\n    startingPoints: 501,\n    doubleIn: false,\n    doubleOut: true\n  };\n\n  /**\n   * Initializes a new instance of the `Darts501Game` class.\n   *\n   * @constructs Darts501Game\n   * @param {Player[]} players An array of players.\n   * @param {Object} [options={}] The options object\n   *\n   * @example\n   * // Creating the new instance\n   * var game = new Darts501Game([new Player({name: 'Player 1'}), new Player({name: 'Player 2'})]);\n   *\n   */\n  constructor(players, options = {}) {\n    let opts = Object.assign({}, Darts501Game.defaultOptions, options);\n    super(players, opts);\n  }\n\n  /**\n   * Determines whether option `doubleIn` is set to `true` or `false`.\n   *\n   * @returns {boolean} If `true` it will affect game specific logic.\n   */\n  get doubleIn() {\n    return this._options.doubleIn;\n  }\n\n  /**\n   * Determines whether option `doubleOut` is set to `true` or `false`.\n   *\n   * @returns {boolean} If `true` it will affect game specific logic.\n   */\n  get doubleOut() {\n    return this._options.doubleOut;\n  }\n\n  /**\n   * Represents single `throw`.\n   *\n   * @param {number} num Number between 0 and 20 plus 25 (bull)\n   * @param {number} [multiplier=1] Multiplier is between 1 and 3 for all of the numbers but 25 (which has only x2 multiplier).\n   * @returns {Throw} `Throw` instance.\n   */\n  throw(num, multiplier = 1) {\n    let currentThrow = super.throw(num, multiplier);\n\n    if(this.currentPlayerTotalPoints === 0) {\n      if(this.doubleOut) {\n        if(multiplier === 2) {\n          this.currentPlayer.winner = true;\n        } else {\n          this.invalidateRound(this.currentRound);\n        }\n      } else {\n        this.currentPlayer.winner = true;\n      }\n    }\n\n    if(this.currentPlayerTotalPoints < 0) {\n      this.invalidateRound(this.currentRound);\n    }\n\n    if(num && this.doubleIn && (this.currentPlayerTotalPoints + num * multiplier) === this.startingPoints && multiplier !== 2) {\n      this.invalidateThrow(currentThrow);\n    }\n\n    if(this.doubleOut && this.currentPlayerTotalPoints === 1) {\n      this.invalidateRound(this.currentRound);\n    }\n\n    return currentThrow;\n\n  }\n\n  /**\n   * @returns {number} Calculates points for `currentRound`\n   */\n  get currentRoundPoints() {\n    return Array.from(this.currentRound.throws).reduce((prev, curr) => prev + curr.number * curr.multiplier, 0);\n  }\n\n  /**\n   * @returns {number} Calculates total points for `currentPlayer`\n   */\n  get currentPlayerTotalPoints() {\n    return this.getPointsByPlayer(this.currentPlayer);\n  }\n\n  /**\n   * Calculates total points for specific player.\n   *\n   * @param {Player} player Instance of the `Player` class.\n   * @returns {number} Total points.\n   */\n  getPointsByPlayer(player) {\n    return this.startingPoints - this.throwsByPlayer(player).reduce((prev, curr) => prev + curr.number * curr.multiplier, 0);\n  }\n\n  /**\n   * @returns {Number} Points that game starts with.\n   */\n  get startingPoints() {\n    return parseInt(this._options.startingPoints, 10);\n  }\n\n}\n"
+    "content": "import DartsBaseGame from './dartsBaseGame';\nimport Throw from '../throw';\n\n/**\n * Class representing a 501 Game\n *\n * @class Darts501Game\n */\nexport default class Darts501Game extends DartsBaseGame {\n\n  static defaultOptions = {\n    startingPoints: 501,\n    doubleIn: false,\n    doubleOut: true\n  };\n\n  /**\n   * Initializes a new instance of the `Darts501Game` class.\n   *\n   * @constructs Darts501Game\n   * @param {Player[]} players An array of players.\n   * @param {Object} [options={}] The options object\n   *\n   * @example\n   * // Creating the new instance\n   * var game = new Darts501Game([new Player({name: 'Player 1'}), new Player({name: 'Player 2'})]);\n   *\n   */\n  constructor(players, options = {}) {\n    let opts = Object.assign({}, Darts501Game.defaultOptions, options);\n    super(players, opts);\n  }\n\n  /**\n   * Determines whether option `doubleIn` is set to `true` or `false`.\n   *\n   * @returns {boolean} If `true` it will affect game specific logic.\n   */\n  get doubleIn() {\n    return this._options.doubleIn;\n  }\n\n  /**\n   * Determines whether option `doubleOut` is set to `true` or `false`.\n   *\n   * @returns {boolean} If `true` it will affect game specific logic.\n   */\n  get doubleOut() {\n    return this._options.doubleOut;\n  }\n\n  /**\n   * Represents single `throw`.\n   *\n   * @param {number} num Number between 0 and 20 plus 25 (bull)\n   * @param {number} [multiplier=1] Multiplier is between 1 and 3 for all of the numbers but 25 (which has only x2 multiplier).\n   * @returns {Throw} `Throw` instance.\n   */\n  throw(num, multiplier = 1) {\n    let currentThrow = super.throw(num, multiplier);\n\n    if(this.currentPlayerTotalPoints === 0) {\n      if(this.doubleOut) {\n        if(multiplier === 2) {\n          this.currentPlayer.winner = true;\n        } else {\n          this.invalidateRound(this.currentRound);\n        }\n      } else {\n        this.currentPlayer.winner = true;\n      }\n    }\n\n    if(this.currentPlayerTotalPoints < 0) {\n      this.invalidateRound(this.currentRound);\n    }\n\n    if(num && this.doubleIn && (this.currentPlayerTotalPoints + num * multiplier) === this.startingPoints && multiplier !== 2) {\n      this.invalidateThrow(currentThrow);\n    }\n\n    if(this.doubleOut && this.currentPlayerTotalPoints === 1) {\n      this.invalidateRound(this.currentRound);\n    }\n\n    return currentThrow;\n\n  }\n\n  /**\n   * @returns {number} Calculates points for `currentRound`\n   */\n  get currentRoundPoints() {\n    return Array.from(this.currentRound.throws).reduce((prev, curr) => prev + curr.number * curr.multiplier, 0);\n  }\n\n  /**\n   * @returns {number} Calculates total points for `currentPlayer`\n   */\n  get currentPlayerTotalPoints() {\n    return this.getPointsByPlayer(this.currentPlayer);\n  }\n\n  /**\n   * Calculates total points for specific player.\n   *\n   * @param {Player} player Instance of the `Player` class.\n   * @returns {number} Total points.\n   */\n  getPointsByPlayer(player) {\n    return this.startingPoints - this.throwsByPlayer(player).reduce((prev, curr) => prev + curr.number * curr.multiplier, 0);\n  }\n\n  /**\n   * @returns {Number} Points that game starts with.\n   */\n  get startingPoints() {\n    return parseInt(this._options.startingPoints, 10);\n  }\n\n  /**\n   * Calculates step-by-step throws to check-out in the same round.\n   *\n   * @param {number} points Total number of points left.\n   * @param {number} leftThrows Number of throws.\n   * @returns {Array} Array of possible throws as string.\n   */\n  getCheckoutHint(points, leftThrows = 3) {\n    let results = [];\n\n    let possibleThrows = [];\n\n    let singles = [];\n    let doubles = [];\n    let triples = [];\n\n    let num = 20;\n\n    let getPoints = (throwInstance) => {\n      return throwInstance.number * throwInstance.multiplier;\n    }\n\n    while(num > 0) {\n      singles.push(new Throw(num));\n      doubles.push(new Throw(num, 2));\n      triples.push(new Throw(num, 3));\n\n      num --;\n    }\n\n    singles.push(new Throw(25));\n    doubles.push(new Throw(25, 2));\n\n    possibleThrows = possibleThrows.concat(singles, doubles, triples);\n\n    for(let double of doubles) {\n\n      if(points === getPoints(double)) {\n        results.push([double]);\n      }\n\n      if(leftThrows > 1) {\n        for(let possibleThrow of possibleThrows) {\n\n          if(getPoints(possibleThrow) + getPoints(double) === points) {\n            results.push([possibleThrow, double]);\n          }\n\n          if(leftThrows > 2) {\n\n            for(let possibleThrow2 of possibleThrows) {\n              if (getPoints(possibleThrow) + getPoints(possibleThrow2) + getPoints(double) === points) {\n                results.push([possibleThrow2, possibleThrow, double]);\n              }\n            }\n          }\n        }\n      }\n    }\n\n    return results;\n  }\n\n}\n"
   },
   {
     "__docId__": 1,
@@ -25,7 +25,7 @@
     "importPath": "darts-scorer-core/dist/es5/games/501.js",
     "importStyle": "Darts501Game",
     "description": "Class representing a 501 Game",
-    "lineNumber": 8,
+    "lineNumber": 9,
     "unknown": [
       {
         "tagName": "@class",
@@ -34,7 +34,7 @@
     ],
     "interface": false,
     "extends": [
-      "src/games/dartsBaseGame~DartsBaseGame"
+      "src/games/dartsBaseGame.js~DartsBaseGame"
     ]
   },
   {
@@ -50,7 +50,7 @@
     "examples": [
       "// Creating the new instance\nvar game = new Darts501Game([new Player({name: 'Player 1'}), new Player({name: 'Player 2'})]);"
     ],
-    "lineNumber": 28,
+    "lineNumber": 29,
     "unknown": [
       {
         "tagName": "@constructs",
@@ -93,7 +93,7 @@
     "longname": "src/games/501.js~Darts501Game#doubleIn",
     "access": null,
     "description": "Determines whether option `doubleIn` is set to `true` or `false`.",
-    "lineNumber": 38,
+    "lineNumber": 39,
     "unknown": [
       {
         "tagName": "@returns",
@@ -125,7 +125,7 @@
     "longname": "src/games/501.js~Darts501Game#doubleOut",
     "access": null,
     "description": "Determines whether option `doubleOut` is set to `true` or `false`.",
-    "lineNumber": 47,
+    "lineNumber": 48,
     "unknown": [
       {
         "tagName": "@returns",
@@ -157,7 +157,7 @@
     "longname": "src/games/501.js~Darts501Game#throw",
     "access": null,
     "description": "Represents single `throw`.",
-    "lineNumber": 58,
+    "lineNumber": 59,
     "unknown": [
       {
         "tagName": "@returns",
@@ -207,8 +207,8 @@
     "memberof": "src/games/501.js~Darts501Game",
     "longname": "src/games/501.js~Darts501Game#currentRoundPoints",
     "access": null,
-    "description": null,
-    "lineNumber": 92,
+    "description": "",
+    "lineNumber": 93,
     "unknown": [
       {
         "tagName": "@returns",
@@ -239,8 +239,8 @@
     "memberof": "src/games/501.js~Darts501Game",
     "longname": "src/games/501.js~Darts501Game#currentPlayerTotalPoints",
     "access": null,
-    "description": null,
-    "lineNumber": 99,
+    "description": "",
+    "lineNumber": 100,
     "unknown": [
       {
         "tagName": "@returns",
@@ -272,7 +272,7 @@
     "longname": "src/games/501.js~Darts501Game#getPointsByPlayer",
     "access": null,
     "description": "Calculates total points for specific player.",
-    "lineNumber": 109,
+    "lineNumber": 110,
     "unknown": [
       {
         "tagName": "@returns",
@@ -310,8 +310,8 @@
     "memberof": "src/games/501.js~Darts501Game",
     "longname": "src/games/501.js~Darts501Game#startingPoints",
     "access": null,
-    "description": null,
-    "lineNumber": 116,
+    "description": "",
+    "lineNumber": 117,
     "unknown": [
       {
         "tagName": "@returns",
@@ -335,6 +335,55 @@
   },
   {
     "__docId__": 10,
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "getCheckoutHint",
+    "memberof": "src/games/501.js~Darts501Game",
+    "longname": "src/games/501.js~Darts501Game#getCheckoutHint",
+    "access": null,
+    "description": "Calculates step-by-step throws to check-out in the same round.",
+    "lineNumber": 128,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{Array} Array of possible throws as string."
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "points",
+        "description": "Total number of points left."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "leftThrows",
+        "description": "Number of throws."
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Array"
+      ],
+      "spread": false,
+      "description": "Array of possible throws as string."
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 11,
     "kind": "file",
     "static": true,
     "variation": null,
@@ -347,7 +396,7 @@
     "content": "import Round from '../round';\n\n/**\n * Provides all the logic to create multiplier games based on this class\n *\n * @class DartsBaseGame\n */\nexport default class DartsBaseGame {\n\n  /**\n   * @static\n   * @property {Object} defaultOptions\n   * @property {Boolean} defaultOptions.isComputer\n   */\n  static defaultOptions = {\n    round: {\n      throwsPerRound: 3\n    }\n  };\n\n  _players = new Set();\n  _playerRounds = new Map();\n\n  _currentRoundNumber = 0;\n  _currentPlayer = null;\n\n  /**\n   * Initializes a new instance of the `DartsBaseGame` class.\n   *\n   * @param {Player[]} players Collection of players.\n   * @param {Object} [options={}] Options.\n   */\n  constructor(players, options = {}) {\n    if(!players || !players.length) {\n      throw Error('No players provided');\n    }\n\n    this.addPlayers(players);\n    this._options = Object.assign({}, DartsBaseGame.defaultOptions, options);\n\n    this._playersIterator = this._players[Symbol.iterator]();\n    let data = this._playersIterator.next();\n    this._currentPlayer = data.value;\n    this.nextRound();\n  }\n\n  /**\n   * Represents single `throw`. Delegates its execution to the `currentRound` object.\n   *\n   * @param {number} num Number between 0 and 20 plus 25 (bull)\n   * @param {number} [multiplier=1] Multiplier is between 1 and 3 for all of the numbers but 25 (which has only x2 multiplier).\n   * @returns {Throw} `Throw` instance.\n   */\n  throw(num, multiplier = 1) {\n    return this.currentRound.throw(num, multiplier);\n  }\n\n  /**\n   * Invalidates specific round.\n   *\n   * @param {Round} round `Round` instance.\n   */\n  invalidateRound(round) {\n    round.invalidate();\n  }\n\n  /**\n   * Invalidates specific `throw`.\n   *\n   * @param {Throw} dartsThrow `Throw` instance.\n   */\n  invalidateThrow(dartsThrow) {\n    dartsThrow.number = 0;\n    dartsThrow.multiplier = 1;\n  }\n\n  /**\n   * Sets `currentPlayer` to the next one.\n   * @returns {Player} Returns player.\n   */\n  nextPlayer() {\n    let data = this._playersIterator.next();\n\n    if(data.done) {\n      this._playersIterator = this._players[Symbol.iterator]();\n      this.nextRound();\n      return this.nextPlayer();\n    }\n\n    this._currentPlayer = data.value;\n    return this._currentPlayer;\n  }\n\n  /**\n   * Creates new instance of the `Round` for each player.\n   */\n  nextRound() {\n    let round;\n\n    for(let player of this._players) {\n      round = new Round(this._options.round);\n      this._playerRounds.get(player).get('rounds').add(round);\n      this._playerRounds.get(player).set('currentRound', round);\n    }\n\n    this._currentRoundNumber++;\n  }\n\n  /**\n   * Adds a player to the game.\n   *\n   * @param {Player} player Instance of `Player` class.\n   */\n  addPlayer(player) {\n    this._players.add(player);\n    this._playerRounds.set(player, new Map().set('rounds', new Set()));\n  }\n\n  /**\n   * Add multiple players to the game.\n   *\n   * @param {Player[]} players Array of players.\n   */\n  addPlayers(players) {\n    for(let player of players) {\n      this.addPlayer(player);\n    }\n  }\n\n  /**\n   * @returns {Player[]} Array of players.\n   */\n  get players() {\n    return Array.from(this._players);\n  }\n\n  /**\n   * @returns {number} Throws per round.\n   */\n  get throwsPerRound() {\n    return this._options.round.throwsPerRound;\n  }\n\n  /**\n   * @returns {Player} Return `Player`\n   */\n  get currentPlayer() {\n    return this._currentPlayer;\n  }\n\n  /**\n   * @returns {Round} Return `Round`.\n   */\n  get currentRound() {\n    return this._playerRounds.get(this.currentPlayer).get('currentRound');\n  }\n\n  /**\n   * @returns {number} Round number.\n   */\n  get currentRoundNumber() {\n    return this._currentRoundNumber;\n  }\n\n  /**\n   * @param {Player} player Instance of the `Player`.\n   * @returns {Round[]} Array of rounds.\n   */\n  roundsByPlayer(player) {\n    return Array.from(this._playerRounds.get(player).get('rounds'));\n  }\n\n  /**\n   * @param {Player} player Instance of the `Player`.\n   * @returns {Throw[]} Array of `Throw` instances.\n   */\n  throwsByPlayer(player) {\n    return this.roundsByPlayer(player).reduce((prev, curr) => {\n      return prev.concat(Array.from(curr.throws));\n    }, []);\n  }\n\n}\n"
   },
   {
-    "__docId__": 11,
+    "__docId__": 12,
     "kind": "class",
     "static": true,
     "variation": null,
@@ -369,7 +418,7 @@
     "interface": false
   },
   {
-    "__docId__": 12,
+    "__docId__": 13,
     "kind": "constructor",
     "static": false,
     "variation": null,
@@ -406,7 +455,7 @@
     "generator": false
   },
   {
-    "__docId__": 13,
+    "__docId__": 14,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -424,7 +473,7 @@
     }
   },
   {
-    "__docId__": 14,
+    "__docId__": 15,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -442,7 +491,7 @@
     }
   },
   {
-    "__docId__": 15,
+    "__docId__": 16,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -460,7 +509,7 @@
     }
   },
   {
-    "__docId__": 16,
+    "__docId__": 17,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -511,7 +560,7 @@
     "generator": false
   },
   {
-    "__docId__": 17,
+    "__docId__": 18,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -536,7 +585,7 @@
     "generator": false
   },
   {
-    "__docId__": 18,
+    "__docId__": 19,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -561,7 +610,7 @@
     "generator": false
   },
   {
-    "__docId__": 19,
+    "__docId__": 20,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -589,7 +638,7 @@
     "generator": false
   },
   {
-    "__docId__": 20,
+    "__docId__": 21,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -607,7 +656,7 @@
     }
   },
   {
-    "__docId__": 21,
+    "__docId__": 22,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -625,7 +674,7 @@
     }
   },
   {
-    "__docId__": 22,
+    "__docId__": 23,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -639,7 +688,7 @@
     "generator": false
   },
   {
-    "__docId__": 23,
+    "__docId__": 24,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -664,7 +713,7 @@
     "generator": false
   },
   {
-    "__docId__": 24,
+    "__docId__": 25,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -689,7 +738,7 @@
     "generator": false
   },
   {
-    "__docId__": 25,
+    "__docId__": 26,
     "kind": "get",
     "static": false,
     "variation": null,
@@ -697,7 +746,7 @@
     "memberof": "src/games/dartsBaseGame.js~DartsBaseGame",
     "longname": "src/games/dartsBaseGame.js~DartsBaseGame#players",
     "access": null,
-    "description": null,
+    "description": "",
     "lineNumber": 133,
     "unknown": [
       {
@@ -721,7 +770,7 @@
     "generator": false
   },
   {
-    "__docId__": 26,
+    "__docId__": 27,
     "kind": "get",
     "static": false,
     "variation": null,
@@ -729,7 +778,7 @@
     "memberof": "src/games/dartsBaseGame.js~DartsBaseGame",
     "longname": "src/games/dartsBaseGame.js~DartsBaseGame#throwsPerRound",
     "access": null,
-    "description": null,
+    "description": "",
     "lineNumber": 140,
     "unknown": [
       {
@@ -753,7 +802,7 @@
     "generator": false
   },
   {
-    "__docId__": 27,
+    "__docId__": 28,
     "kind": "get",
     "static": false,
     "variation": null,
@@ -761,7 +810,7 @@
     "memberof": "src/games/dartsBaseGame.js~DartsBaseGame",
     "longname": "src/games/dartsBaseGame.js~DartsBaseGame#currentPlayer",
     "access": null,
-    "description": null,
+    "description": "",
     "lineNumber": 147,
     "unknown": [
       {
@@ -785,7 +834,7 @@
     "generator": false
   },
   {
-    "__docId__": 28,
+    "__docId__": 29,
     "kind": "get",
     "static": false,
     "variation": null,
@@ -793,7 +842,7 @@
     "memberof": "src/games/dartsBaseGame.js~DartsBaseGame",
     "longname": "src/games/dartsBaseGame.js~DartsBaseGame#currentRound",
     "access": null,
-    "description": null,
+    "description": "",
     "lineNumber": 154,
     "unknown": [
       {
@@ -817,7 +866,7 @@
     "generator": false
   },
   {
-    "__docId__": 29,
+    "__docId__": 30,
     "kind": "get",
     "static": false,
     "variation": null,
@@ -825,7 +874,7 @@
     "memberof": "src/games/dartsBaseGame.js~DartsBaseGame",
     "longname": "src/games/dartsBaseGame.js~DartsBaseGame#currentRoundNumber",
     "access": null,
-    "description": null,
+    "description": "",
     "lineNumber": 161,
     "unknown": [
       {
@@ -849,7 +898,7 @@
     "generator": false
   },
   {
-    "__docId__": 30,
+    "__docId__": 31,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -857,7 +906,7 @@
     "memberof": "src/games/dartsBaseGame.js~DartsBaseGame",
     "longname": "src/games/dartsBaseGame.js~DartsBaseGame#roundsByPlayer",
     "access": null,
-    "description": null,
+    "description": "",
     "lineNumber": 169,
     "unknown": [
       {
@@ -888,7 +937,7 @@
     "generator": false
   },
   {
-    "__docId__": 31,
+    "__docId__": 32,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -896,7 +945,7 @@
     "memberof": "src/games/dartsBaseGame.js~DartsBaseGame",
     "longname": "src/games/dartsBaseGame.js~DartsBaseGame#throwsByPlayer",
     "access": null,
-    "description": null,
+    "description": "",
     "lineNumber": 177,
     "unknown": [
       {
@@ -927,7 +976,7 @@
     "generator": false
   },
   {
-    "__docId__": 32,
+    "__docId__": 33,
     "kind": "file",
     "static": true,
     "variation": null,
@@ -937,10 +986,10 @@
     "access": null,
     "description": null,
     "lineNumber": 1,
-    "content": "import Player from './player';\nimport Darts501Game from './games/501';\n\nexport default {\n  Player,\n  games: {\n    Darts501Game\n  }\n};\n"
+    "content": "import 'babel-polyfill';\n\nimport Player from './player';\nimport Darts501Game from './games/501';\n\nexport default {\n  Player,\n  games: {\n    Darts501Game\n  }\n};\n"
   },
   {
-    "__docId__": 33,
+    "__docId__": 34,
     "kind": "file",
     "static": true,
     "variation": null,
@@ -953,7 +1002,7 @@
     "content": "/**\n * Provides all the logic to create instance of Player\n *\n * @class Player\n */\nexport default class Player {\n\n  /**\n   * @property {Object} defaultOptions\n   * @property {Boolean} defaultOptions.isComputer\n   */\n  defaultOptions = {\n    isComputer: false\n  };\n\n  /**\n   * Initializes a new instance of the `Player` class.\n   *\n   * @constructs Player\n   * @param {Object|*} user A user object.\n   * @param {Object} [options={}] Options.\n   *\n   * @example\n   * // Creating a new instance\n   * var player1 = new Player({name: 'Player 1'});\n   */\n  constructor(user, options = {}) {\n    /**\n     * @type {Object|*}\n     * @private\n     */\n    this._user = user;\n\n    /**\n     * @type {Object}\n     * @private\n     */\n    this._options = Object.assign({}, this.defaultOptions, options);\n  }\n\n  /**\n   * @returns {Boolean} Getter\n   */\n  get isComputer() {\n    return this._options.isComputer;\n  }\n\n  /**\n   * @param {Boolean} bool Setter\n   */\n  set isComputer(bool) {\n    this._options.isComputer = bool;\n  }\n\n}\n"
   },
   {
-    "__docId__": 34,
+    "__docId__": 35,
     "kind": "class",
     "static": true,
     "variation": null,
@@ -975,7 +1024,7 @@
     "interface": false
   },
   {
-    "__docId__": 35,
+    "__docId__": 36,
     "kind": "constructor",
     "static": false,
     "variation": null,
@@ -1022,7 +1071,7 @@
     "generator": false
   },
   {
-    "__docId__": 36,
+    "__docId__": 37,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -1030,7 +1079,7 @@
     "memberof": "src/player.js~Player",
     "longname": "src/player.js~Player#_user",
     "access": "private",
-    "description": null,
+    "description": "",
     "lineNumber": 32,
     "type": {
       "nullable": null,
@@ -1043,7 +1092,7 @@
     }
   },
   {
-    "__docId__": 37,
+    "__docId__": 38,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -1051,7 +1100,7 @@
     "memberof": "src/player.js~Player",
     "longname": "src/player.js~Player#_options",
     "access": "private",
-    "description": null,
+    "description": "",
     "lineNumber": 38,
     "type": {
       "nullable": null,
@@ -1063,7 +1112,7 @@
     }
   },
   {
-    "__docId__": 38,
+    "__docId__": 39,
     "kind": "get",
     "static": false,
     "variation": null,
@@ -1071,7 +1120,7 @@
     "memberof": "src/player.js~Player",
     "longname": "src/player.js~Player#isComputer",
     "access": null,
-    "description": null,
+    "description": "",
     "lineNumber": 44,
     "unknown": [
       {
@@ -1095,7 +1144,7 @@
     "generator": false
   },
   {
-    "__docId__": 39,
+    "__docId__": 40,
     "kind": "set",
     "static": false,
     "variation": null,
@@ -1103,7 +1152,7 @@
     "memberof": "src/player.js~Player",
     "longname": "src/player.js~Player#isComputer",
     "access": null,
-    "description": null,
+    "description": "",
     "lineNumber": 51,
     "params": [
       {
@@ -1125,7 +1174,7 @@
     "generator": false
   },
   {
-    "__docId__": 40,
+    "__docId__": 41,
     "kind": "file",
     "static": true,
     "variation": null,
@@ -1135,10 +1184,10 @@
     "access": null,
     "description": null,
     "lineNumber": 1,
-    "content": "import Throw from './throw';\n\n/**\n * Class representing a round.\n *\n * @class Round\n */\nexport default class Round {\n\n  _throws = new Set();\n\n  /**\n   * @property {Object} defaultOptions Default options\n   * @property {number} defaultOptions.throwsPerRound The default number of throws per round.\n   *\n   */\n  defaultOptions = {\n    throwsPerRound: 3\n  };\n\n  /**\n   * Initializes a new instance of the `Round` class.\n   *\n   * @constructs Round\n   * @param {Object} [options={}] The options object\n   *\n   * @example\n   * var round = new Round();\n   *\n   * round.throw(20, 3);\n   * round.throw(20, 3);\n   * round.throw(20, 3);\n   *\n   * round.isDone //> `true`\n   */\n  constructor(options = {}) {\n    this._options = Object.assign({}, this.defaultOptions, options);\n  }\n\n  /**\n   * @returns {number} Number of throws per round.\n   */\n  get size() {\n    return this._throws.size;\n  }\n\n  /**\n   * @returns {Object} Options object.\n   */\n  get options() {\n    return this._options;\n  }\n\n  /**\n   * Represents single `throw`.\n   *\n   * @param {number} num Number between 0 and 20 plus 25 (bull)\n   * @param {number} [multiplier=1] Multiplier is between 1 and 3 for all of the numbers but 25 (which has only x2 multiplier).\n   * @returns {Throw} `Throw` instance.\n   */\n  throw(num, multiplier) {\n    if(this.size < this.options.throwsPerRound) {\n      let throwInstance = new Throw(num, multiplier);\n\n      this._throws.add(throwInstance);\n\n      return throwInstance;\n    } else {\n      return false;\n    }\n  }\n\n  /**\n   * Removes last throw from the round.\n   *\n   * @returns {boolean} Returns `true` or `false`.\n   */\n  pop() {\n    return this._throws.delete(Array.from(this._throws).pop());\n  }\n\n  /**\n   * @returns {Number} Getter option `throwsPerRound`.\n   */\n  get throwsPerRound() {\n    return parseInt(this._options.throwsPerRound, 10);\n  }\n\n  /**\n   * Clear all throws for the round.\n   */\n  clear() {\n    this._throws.clear();\n  }\n\n  /**\n   * @returns {boolean} `true` if `size` equals `0`. Otherwise `false`.\n   */\n  get isEmpty() {\n    return this.size === 0;\n  }\n\n  /**\n   * @returns {boolean} `true` if `size` equals `throwsPerRound`. Otherwise `false`.\n   */\n  get isDone() {\n    return this.size === this.throwsPerRound;\n  }\n\n  /**\n   * @returns {Set} Throws\n   */\n  get throws() {\n    return this._throws;\n  }\n\n  /**\n   * Invalidates whole round with specific `number` and `multiplier`.\n   *\n   * @param {number} number Number between 0 and 20 plus 25 (bull)\n   * @param {number} [multiplier=1] Multiplier is between 1 and 3 for all of the numbers but 25 (which has only x2 multiplier).\n   */\n  invalidate(number = 0, multiplier = 1) {\n    this.clear();\n    while(this.size < this.throwsPerRound) {\n      this.throw(number, multiplier);\n    }\n  }\n\n  /**\n   * @returns {string} `String` representation of the `Round`.\n   */\n  toString() {\n    return Array.from(this._throws).toString();\n  }\n\n}\n"
+    "content": "import Throw from './throw';\n\n/**\n * Class representing a round.\n *\n * @class Round\n */\nexport default class Round {\n\n  _throws = new Set();\n\n  /**\n   * @property {Object} defaultOptions Default options\n   * @property {number} defaultOptions.throwsPerRound The default number of throws per round.\n   *\n   */\n  defaultOptions = {\n    throwsPerRound: 3\n  };\n\n  /**\n   * Initializes a new instance of the `Round` class.\n   *\n   * @constructs Round\n   * @param {Object} [options={}] The options object\n   *\n   * @example\n   * var round = new Round();\n   *\n   * round.throw(20, 3);\n   * round.throw(20, 3);\n   * round.throw(20, 3);\n   *\n   * round.isDone //> `true`\n   */\n  constructor(options = {}) {\n    this._options = Object.assign({}, this.defaultOptions, options);\n  }\n\n  /**\n   * @returns {number} Number of throws per round.\n   */\n  get size() {\n    return this._throws.size;\n  }\n\n  /**\n   * @returns {Object} Options object.\n   */\n  get options() {\n    return this._options;\n  }\n\n  /**\n   * Represents single `throw`.\n   *\n   * @param {number} num Number between 0 and 20 plus 25 (bull)\n   * @param {number} [multiplier=1] Multiplier is between 1 and 3 for all of the numbers but 25 (which has only x2 multiplier).\n   * @returns {Throw} `Throw` instance.\n   */\n  throw(num, multiplier) {\n    if(this.size < this.options.throwsPerRound) {\n      let throwInstance = new Throw(num, multiplier);\n\n      this._throws.add(throwInstance);\n\n      return throwInstance;\n    } else {\n      return false;\n    }\n  }\n\n  /**\n   * Removes last throw from the round.\n   *\n   * @returns {boolean} Returns `true` or `false`.\n   */\n  pop() {\n    return this._throws.delete(Array.from(this._throws).pop());\n  }\n\n  /**\n   * @returns {Number} Getter option `throwsPerRound`.\n   */\n  get throwsPerRound() {\n    return parseInt(this._options.throwsPerRound, 10);\n  }\n\n  /**\n   * Clear all throws for the round.\n   */\n  clear() {\n    this._throws.clear();\n  }\n\n  /**\n   * @returns {boolean} `true` if `size` equals `0`. Otherwise `false`.\n   */\n  get isEmpty() {\n    return this.size === 0;\n  }\n\n  /**\n   * @returns {boolean} `true` if `size` equals `throwsPerRound`. Otherwise `false`.\n   */\n  get isDone() {\n    return this.size === this.throwsPerRound;\n  }\n\n  /**\n   * @returns {Set} Throws\n   */\n  get throws() {\n    return this._throws;\n  }\n\n  /**\n   * Invalidates whole round with specific `number` and `multiplier`.\n   *\n   * @param {number} number Number between 0 and 20 plus 25 (bull)\n   * @param {number} [multiplier=1] Multiplier is between 1 and 3 for all of the numbers but 25 (which has only x2 multiplier).\n   */\n  invalidate(number = 0, multiplier = 1) {\n    this.clear();\n    while(this.size < this.throwsPerRound) {\n      this.throw(number, multiplier);\n    }\n  }\n\n  /**\n   * @returns {string} `String` representation of the `Round`.\n   */\n  toString() {\n    return Array.from(this._throws).join('-');\n  }\n\n}\n"
   },
   {
-    "__docId__": 41,
+    "__docId__": 42,
     "kind": "class",
     "static": true,
     "variation": null,
@@ -1160,7 +1209,7 @@
     "interface": false
   },
   {
-    "__docId__": 42,
+    "__docId__": 43,
     "kind": "constructor",
     "static": false,
     "variation": null,
@@ -1196,7 +1245,7 @@
     "generator": false
   },
   {
-    "__docId__": 43,
+    "__docId__": 44,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -1214,7 +1263,7 @@
     }
   },
   {
-    "__docId__": 44,
+    "__docId__": 45,
     "kind": "get",
     "static": false,
     "variation": null,
@@ -1222,7 +1271,7 @@
     "memberof": "src/round.js~Round",
     "longname": "src/round.js~Round#size",
     "access": null,
-    "description": null,
+    "description": "",
     "lineNumber": 43,
     "unknown": [
       {
@@ -1246,7 +1295,7 @@
     "generator": false
   },
   {
-    "__docId__": 45,
+    "__docId__": 46,
     "kind": "get",
     "static": false,
     "variation": null,
@@ -1254,7 +1303,7 @@
     "memberof": "src/round.js~Round",
     "longname": "src/round.js~Round#options",
     "access": null,
-    "description": null,
+    "description": "",
     "lineNumber": 50,
     "unknown": [
       {
@@ -1278,7 +1327,7 @@
     "generator": false
   },
   {
-    "__docId__": 46,
+    "__docId__": 47,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -1329,7 +1378,7 @@
     "generator": false
   },
   {
-    "__docId__": 47,
+    "__docId__": 48,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -1357,7 +1406,7 @@
     "generator": false
   },
   {
-    "__docId__": 48,
+    "__docId__": 49,
     "kind": "get",
     "static": false,
     "variation": null,
@@ -1365,7 +1414,7 @@
     "memberof": "src/round.js~Round",
     "longname": "src/round.js~Round#throwsPerRound",
     "access": null,
-    "description": null,
+    "description": "",
     "lineNumber": 85,
     "unknown": [
       {
@@ -1389,7 +1438,7 @@
     "generator": false
   },
   {
-    "__docId__": 49,
+    "__docId__": 50,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -1403,7 +1452,7 @@
     "generator": false
   },
   {
-    "__docId__": 50,
+    "__docId__": 51,
     "kind": "get",
     "static": false,
     "variation": null,
@@ -1411,7 +1460,7 @@
     "memberof": "src/round.js~Round",
     "longname": "src/round.js~Round#isEmpty",
     "access": null,
-    "description": null,
+    "description": "",
     "lineNumber": 99,
     "unknown": [
       {
@@ -1435,7 +1484,7 @@
     "generator": false
   },
   {
-    "__docId__": 51,
+    "__docId__": 52,
     "kind": "get",
     "static": false,
     "variation": null,
@@ -1443,7 +1492,7 @@
     "memberof": "src/round.js~Round",
     "longname": "src/round.js~Round#isDone",
     "access": null,
-    "description": null,
+    "description": "",
     "lineNumber": 106,
     "unknown": [
       {
@@ -1467,7 +1516,7 @@
     "generator": false
   },
   {
-    "__docId__": 52,
+    "__docId__": 53,
     "kind": "get",
     "static": false,
     "variation": null,
@@ -1475,7 +1524,7 @@
     "memberof": "src/round.js~Round",
     "longname": "src/round.js~Round#throws",
     "access": null,
-    "description": null,
+    "description": "",
     "lineNumber": 113,
     "unknown": [
       {
@@ -1499,7 +1548,7 @@
     "generator": false
   },
   {
-    "__docId__": 53,
+    "__docId__": 54,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -1536,7 +1585,7 @@
     "generator": false
   },
   {
-    "__docId__": 54,
+    "__docId__": 55,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -1544,7 +1593,7 @@
     "memberof": "src/round.js~Round",
     "longname": "src/round.js~Round#toString",
     "access": null,
-    "description": null,
+    "description": "",
     "lineNumber": 133,
     "unknown": [
       {
@@ -1564,7 +1613,7 @@
     "generator": false
   },
   {
-    "__docId__": 55,
+    "__docId__": 56,
     "kind": "file",
     "static": true,
     "variation": null,
@@ -1574,10 +1623,10 @@
     "access": null,
     "description": null,
     "lineNumber": 1,
-    "content": "/**\n * Class representing a single `Throw`\n *\n * @class Throw\n */\nexport default class Throw {\n\n  /**\n   * Initializes a new instance of the `Throw` class.\n   *\n   * @constructs Throw\n   * @param {number} num Number between 0 and 20 plus 25 (bull)\n   * @param {number} [multiplier=1] Multiplier is between 1 and 3 for all of the numbers but 25 (which has only x2 multiplier).\n   */\n  constructor(num, multiplier = 1) {\n    this._number = parseInt(num, 10);\n    this._multiplier = parseInt(multiplier, 10);\n  }\n\n  /**\n   * Factory function.\n   *\n   * @param {number} num Number between 0 and 20 plus 25 (bull)\n   * @param {number} [multiplier=1] Multiplier is between 1 and 3 for all of the numbers but 25 (which has only x2 multiplier).\n   * @returns {Throw} Instance of the `Throw` class.\n   */\n  static create(num, multiplier = 1) {\n    return new Throw(num, multiplier);\n  }\n\n  /**\n   * @returns {Number} Getter `number`.\n   */\n  get number() {\n    return this._number;\n  }\n\n  /**\n   * Sets `number`.\n   * @param {Number} num Setter `number`.\n   */\n  set number(num) {\n    this._number = num;\n  }\n\n  /**\n   * @returns {Number} Getter `multiplier`.\n   */\n  get multiplier() {\n    return this._multiplier;\n  }\n\n  /**\n   * Sets `multiplier`.\n   * @param {Number} multiplier Setter `multiplier`.\n   */\n  set multiplier(multiplier) {\n    this._multiplier = multiplier;\n  }\n\n  /**\n   * @returns {boolean} Helper getter.\n   */\n  get isSingle() {\n    return this.multiplier === 1;\n  }\n\n  /**\n   * @returns {boolean} Helper getter.\n   */\n  get isDouble() {\n    return this.multiplier === 2;\n  }\n\n  /**\n   * @returns {boolean} Helper getter.\n   */\n  get isTriple() {\n    return this.multiplier === 3;\n  }\n\n  /**\n   * @returns {string} `String` representation of the `Throw` instance.\n   */\n  toString() {\n    return [this.number, this.multiplier].toString();\n  }\n\n}\n"
+    "content": "/**\n * Class representing a single `Throw`\n *\n * @class Throw\n */\nexport default class Throw {\n\n  /**\n   * Initializes a new instance of the `Throw` class.\n   *\n   * @constructs Throw\n   * @param {number} num Number between 0 and 20 plus 25 (bull)\n   * @param {number} [multiplier=1] Multiplier is between 1 and 3 for all of the numbers but 25 (which has only x2 multiplier).\n   */\n  constructor(num, multiplier = 1) {\n    this._number = parseInt(num, 10);\n    this._multiplier = parseInt(multiplier, 10);\n  }\n\n  /**\n   * Factory function.\n   *\n   * @param {number} num Number between 0 and 20 plus 25 (bull)\n   * @param {number} [multiplier=1] Multiplier is between 1 and 3 for all of the numbers but 25 (which has only x2 multiplier).\n   * @returns {Throw} Instance of the `Throw` class.\n   */\n  static create(num, multiplier = 1) {\n    return new Throw(num, multiplier);\n  }\n\n  /**\n   * Factory function.\n   *\n   * @param {string} str String representing the throw\n   * @returns {Throw} Instance of the `Throw` class.\n   *\n   * @example\n   * let throwInstance1 = Throw.fromString('T20'); // triple 20\n   * let throwInstance2 = Throw.fromString('S15'); // single 15\n   * let throwInstance3 = Throw.fromString('DB'); // double Bull\n   */\n  static fromString(str) {\n    let regExp = /(S|D|T)(\\d{1,2}|B)/ig\n    let [, multiplierStr, num] = regExp.exec(str);\n    let multiplierMap = new Map([['S', 1], ['D', 2], ['T', 3]]);\n    let multiplier = multiplierMap.get(multiplierStr);\n\n    return Throw.create(num, multiplier);\n  }\n\n  /**\n   * @returns {Number} Getter `number`.\n   */\n  get number() {\n    return this._number;\n  }\n\n  /**\n   * Sets `number`.\n   * @param {Number} num Setter `number`.\n   */\n  set number(num) {\n    this._number = num;\n  }\n\n  /**\n   * @returns {Number} Getter `multiplier`.\n   */\n  get multiplier() {\n    return this._multiplier;\n  }\n\n  /**\n   * Sets `multiplier`.\n   * @param {Number} multiplier Setter `multiplier`.\n   */\n  set multiplier(multiplier) {\n    this._multiplier = multiplier;\n  }\n\n  /**\n   * @returns {boolean} Helper getter.\n   */\n  get isSingle() {\n    return this.multiplier === 1;\n  }\n\n  /**\n   * @returns {boolean} Helper getter.\n   */\n  get isDouble() {\n    return this.multiplier === 2;\n  }\n\n  /**\n   * @returns {boolean} Helper getter.\n   */\n  get isTriple() {\n    return this.multiplier === 3;\n  }\n\n  /**\n   * Returns one of the followings: 'S' (single) or 'D' (double) or 'T' (triple)\n   * @returns {number} String representing `multiplier`\n   * @example\n   * let throwInstance = new Throw(10, 2);\n   * throwInstance.multiplierAsString //=> 'D'\n   */\n  get multiplierAsString() {\n    let map = new Map([[1, 'S'], [2, 'D'], [3, 'T']]);\n    return map.get(this.multiplier);\n  }\n\n  /**\n   * @returns {string} `String` representation of the `Throw` instance.\n   */\n  toString() {\n    let val = this._number === 25 ? 'B' : this._number;\n    return `${this.multiplierAsString}${val}`;\n  }\n\n}\n"
   },
   {
-    "__docId__": 56,
+    "__docId__": 57,
     "kind": "class",
     "static": true,
     "variation": null,
@@ -1599,7 +1648,7 @@
     "interface": false
   },
   {
-    "__docId__": 57,
+    "__docId__": 58,
     "kind": "constructor",
     "static": false,
     "variation": null,
@@ -1642,7 +1691,7 @@
     "generator": false
   },
   {
-    "__docId__": 58,
+    "__docId__": 59,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -1660,7 +1709,7 @@
     }
   },
   {
-    "__docId__": 59,
+    "__docId__": 60,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -1678,7 +1727,7 @@
     }
   },
   {
-    "__docId__": 60,
+    "__docId__": 61,
     "kind": "method",
     "static": true,
     "variation": null,
@@ -1729,7 +1778,49 @@
     "generator": false
   },
   {
-    "__docId__": 61,
+    "__docId__": 62,
+    "kind": "method",
+    "static": true,
+    "variation": null,
+    "name": "fromString",
+    "memberof": "src/throw.js~Throw",
+    "longname": "src/throw.js~Throw.fromString",
+    "access": null,
+    "description": "Factory function.",
+    "examples": [
+      "let throwInstance1 = Throw.fromString('T20'); // triple 20\nlet throwInstance2 = Throw.fromString('S15'); // single 15\nlet throwInstance3 = Throw.fromString('DB'); // double Bull"
+    ],
+    "lineNumber": 42,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{Throw} Instance of the `Throw` class."
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "str",
+        "description": "String representing the throw"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Throw"
+      ],
+      "spread": false,
+      "description": "Instance of the `Throw` class."
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 63,
     "kind": "get",
     "static": false,
     "variation": null,
@@ -1737,8 +1828,8 @@
     "memberof": "src/throw.js~Throw",
     "longname": "src/throw.js~Throw#number",
     "access": null,
-    "description": null,
-    "lineNumber": 34,
+    "description": "",
+    "lineNumber": 54,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1761,7 +1852,7 @@
     "generator": false
   },
   {
-    "__docId__": 62,
+    "__docId__": 64,
     "kind": "set",
     "static": false,
     "variation": null,
@@ -1770,7 +1861,7 @@
     "longname": "src/throw.js~Throw#number",
     "access": null,
     "description": "Sets `number`.",
-    "lineNumber": 42,
+    "lineNumber": 62,
     "params": [
       {
         "nullable": null,
@@ -1791,7 +1882,7 @@
     "generator": false
   },
   {
-    "__docId__": 63,
+    "__docId__": 65,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -1800,7 +1891,7 @@
     "longname": "src/throw.js~Throw#_number",
     "access": null,
     "description": null,
-    "lineNumber": 43,
+    "lineNumber": 63,
     "undocument": true,
     "type": {
       "types": [
@@ -1809,7 +1900,7 @@
     }
   },
   {
-    "__docId__": 64,
+    "__docId__": 66,
     "kind": "get",
     "static": false,
     "variation": null,
@@ -1817,8 +1908,8 @@
     "memberof": "src/throw.js~Throw",
     "longname": "src/throw.js~Throw#multiplier",
     "access": null,
-    "description": null,
-    "lineNumber": 49,
+    "description": "",
+    "lineNumber": 69,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1841,7 +1932,7 @@
     "generator": false
   },
   {
-    "__docId__": 65,
+    "__docId__": 67,
     "kind": "set",
     "static": false,
     "variation": null,
@@ -1850,7 +1941,7 @@
     "longname": "src/throw.js~Throw#multiplier",
     "access": null,
     "description": "Sets `multiplier`.",
-    "lineNumber": 57,
+    "lineNumber": 77,
     "params": [
       {
         "nullable": null,
@@ -1871,7 +1962,7 @@
     "generator": false
   },
   {
-    "__docId__": 66,
+    "__docId__": 68,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -1880,7 +1971,7 @@
     "longname": "src/throw.js~Throw#_multiplier",
     "access": null,
     "description": null,
-    "lineNumber": 58,
+    "lineNumber": 78,
     "undocument": true,
     "type": {
       "types": [
@@ -1889,7 +1980,7 @@
     }
   },
   {
-    "__docId__": 67,
+    "__docId__": 69,
     "kind": "get",
     "static": false,
     "variation": null,
@@ -1897,72 +1988,8 @@
     "memberof": "src/throw.js~Throw",
     "longname": "src/throw.js~Throw#isSingle",
     "access": null,
-    "description": null,
-    "lineNumber": 64,
-    "unknown": [
-      {
-        "tagName": "@returns",
-        "tagValue": "{boolean} Helper getter."
-      }
-    ],
-    "return": {
-      "nullable": null,
-      "types": [
-        "boolean"
-      ],
-      "spread": false,
-      "description": "Helper getter."
-    },
-    "type": {
-      "types": [
-        "*"
-      ]
-    },
-    "generator": false
-  },
-  {
-    "__docId__": 68,
-    "kind": "get",
-    "static": false,
-    "variation": null,
-    "name": "isDouble",
-    "memberof": "src/throw.js~Throw",
-    "longname": "src/throw.js~Throw#isDouble",
-    "access": null,
-    "description": null,
-    "lineNumber": 71,
-    "unknown": [
-      {
-        "tagName": "@returns",
-        "tagValue": "{boolean} Helper getter."
-      }
-    ],
-    "return": {
-      "nullable": null,
-      "types": [
-        "boolean"
-      ],
-      "spread": false,
-      "description": "Helper getter."
-    },
-    "type": {
-      "types": [
-        "*"
-      ]
-    },
-    "generator": false
-  },
-  {
-    "__docId__": 69,
-    "kind": "get",
-    "static": false,
-    "variation": null,
-    "name": "isTriple",
-    "memberof": "src/throw.js~Throw",
-    "longname": "src/throw.js~Throw#isTriple",
-    "access": null,
-    "description": null,
-    "lineNumber": 78,
+    "description": "",
+    "lineNumber": 84,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1986,6 +2013,105 @@
   },
   {
     "__docId__": 70,
+    "kind": "get",
+    "static": false,
+    "variation": null,
+    "name": "isDouble",
+    "memberof": "src/throw.js~Throw",
+    "longname": "src/throw.js~Throw#isDouble",
+    "access": null,
+    "description": "",
+    "lineNumber": 91,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{boolean} Helper getter."
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "boolean"
+      ],
+      "spread": false,
+      "description": "Helper getter."
+    },
+    "type": {
+      "types": [
+        "*"
+      ]
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 71,
+    "kind": "get",
+    "static": false,
+    "variation": null,
+    "name": "isTriple",
+    "memberof": "src/throw.js~Throw",
+    "longname": "src/throw.js~Throw#isTriple",
+    "access": null,
+    "description": "",
+    "lineNumber": 98,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{boolean} Helper getter."
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "boolean"
+      ],
+      "spread": false,
+      "description": "Helper getter."
+    },
+    "type": {
+      "types": [
+        "*"
+      ]
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 72,
+    "kind": "get",
+    "static": false,
+    "variation": null,
+    "name": "multiplierAsString",
+    "memberof": "src/throw.js~Throw",
+    "longname": "src/throw.js~Throw#multiplierAsString",
+    "access": null,
+    "description": "Returns one of the followings: 'S' (single) or 'D' (double) or 'T' (triple)",
+    "examples": [
+      "let throwInstance = new Throw(10, 2);\nthrowInstance.multiplierAsString //=> 'D'"
+    ],
+    "lineNumber": 109,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{number} String representing `multiplier`"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "number"
+      ],
+      "spread": false,
+      "description": "String representing `multiplier`"
+    },
+    "type": {
+      "types": [
+        "*"
+      ]
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 73,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -1993,8 +2119,8 @@
     "memberof": "src/throw.js~Throw",
     "longname": "src/throw.js~Throw#toString",
     "access": null,
-    "description": null,
-    "lineNumber": 85,
+    "description": "",
+    "lineNumber": 117,
     "unknown": [
       {
         "tagName": "@returns",
@@ -2013,7 +2139,7 @@
     "generator": false
   },
   {
-    "__docId__": 72,
+    "__docId__": 75,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2022,11 +2148,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Infinity",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 73,
+    "__docId__": 76,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2035,11 +2161,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~NaN",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 74,
+    "__docId__": 77,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2048,11 +2174,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~undefined",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 75,
+    "__docId__": 78,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2061,11 +2187,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~null",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 76,
+    "__docId__": 79,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2074,11 +2200,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Object",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 77,
+    "__docId__": 80,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2087,11 +2213,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~object",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 78,
+    "__docId__": 81,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2100,11 +2226,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Function",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 79,
+    "__docId__": 82,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2113,11 +2239,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~function",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 80,
+    "__docId__": 83,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2126,11 +2252,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Boolean",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 81,
+    "__docId__": 84,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2139,11 +2265,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~boolean",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 82,
+    "__docId__": 85,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2152,11 +2278,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Symbol",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 83,
+    "__docId__": 86,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2165,11 +2291,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Error",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 84,
+    "__docId__": 87,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2178,11 +2304,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~EvalError",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 85,
+    "__docId__": 88,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2191,11 +2317,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~InternalError",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 86,
+    "__docId__": 89,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2204,11 +2330,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~RangeError",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 87,
+    "__docId__": 90,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2217,11 +2343,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~ReferenceError",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 88,
+    "__docId__": 91,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2230,11 +2356,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~SyntaxError",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 89,
+    "__docId__": 92,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2243,11 +2369,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~TypeError",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 90,
+    "__docId__": 93,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2256,11 +2382,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~URIError",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 91,
+    "__docId__": 94,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2269,11 +2395,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Number",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 92,
+    "__docId__": 95,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2282,11 +2408,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~number",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 93,
+    "__docId__": 96,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2295,11 +2421,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Date",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 94,
+    "__docId__": 97,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2308,11 +2434,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~String",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 95,
+    "__docId__": 98,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2321,11 +2447,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~string",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 96,
+    "__docId__": 99,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2334,11 +2460,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~RegExp",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 97,
+    "__docId__": 100,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2347,11 +2473,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Array",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 98,
+    "__docId__": 101,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2360,11 +2486,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Int8Array",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 99,
+    "__docId__": 102,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2373,11 +2499,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint8Array",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 100,
+    "__docId__": 103,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2386,11 +2512,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint8ClampedArray",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 101,
+    "__docId__": 104,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2399,11 +2525,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Int16Array",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 102,
+    "__docId__": 105,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2412,11 +2538,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint16Array",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 103,
+    "__docId__": 106,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2425,11 +2551,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Int32Array",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 104,
+    "__docId__": 107,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2438,11 +2564,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint32Array",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 105,
+    "__docId__": 108,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2451,11 +2577,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Float32Array",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 106,
+    "__docId__": 109,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2464,11 +2590,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Float64Array",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 107,
+    "__docId__": 110,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2477,11 +2603,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Map",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 108,
+    "__docId__": 111,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2490,11 +2616,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Set",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 109,
+    "__docId__": 112,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2503,11 +2629,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~WeakMap",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 110,
+    "__docId__": 113,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2516,11 +2642,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~WeakSet",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 111,
+    "__docId__": 114,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2529,11 +2655,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~ArrayBuffer",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 112,
+    "__docId__": 115,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2542,11 +2668,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~DataView",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 113,
+    "__docId__": 116,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2555,11 +2681,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~JSON",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 114,
+    "__docId__": 117,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2568,11 +2694,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Promise",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 115,
+    "__docId__": 118,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2581,11 +2707,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Generator",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 116,
+    "__docId__": 119,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2594,11 +2720,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~GeneratorFunction",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 117,
+    "__docId__": 120,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2607,11 +2733,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Reflect",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 118,
+    "__docId__": 121,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2620,11 +2746,11 @@
     "memberof": "BuiltinExternal/ECMAScriptExternal.js",
     "longname": "BuiltinExternal/ECMAScriptExternal.js~Proxy",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 120,
+    "__docId__": 123,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2633,11 +2759,11 @@
     "memberof": "BuiltinExternal/WebAPIExternal.js",
     "longname": "BuiltinExternal/WebAPIExternal.js~CanvasRenderingContext2D",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 121,
+    "__docId__": 124,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2646,11 +2772,11 @@
     "memberof": "BuiltinExternal/WebAPIExternal.js",
     "longname": "BuiltinExternal/WebAPIExternal.js~DocumentFragment",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 122,
+    "__docId__": 125,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2659,11 +2785,11 @@
     "memberof": "BuiltinExternal/WebAPIExternal.js",
     "longname": "BuiltinExternal/WebAPIExternal.js~Element",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 123,
+    "__docId__": 126,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2672,11 +2798,11 @@
     "memberof": "BuiltinExternal/WebAPIExternal.js",
     "longname": "BuiltinExternal/WebAPIExternal.js~Event",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 124,
+    "__docId__": 127,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2685,11 +2811,11 @@
     "memberof": "BuiltinExternal/WebAPIExternal.js",
     "longname": "BuiltinExternal/WebAPIExternal.js~Node",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 125,
+    "__docId__": 128,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2698,11 +2824,11 @@
     "memberof": "BuiltinExternal/WebAPIExternal.js",
     "longname": "BuiltinExternal/WebAPIExternal.js~NodeList",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 126,
+    "__docId__": 129,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2711,11 +2837,11 @@
     "memberof": "BuiltinExternal/WebAPIExternal.js",
     "longname": "BuiltinExternal/WebAPIExternal.js~XMLHttpRequest",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   },
   {
-    "__docId__": 127,
+    "__docId__": 130,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -2724,7 +2850,7 @@
     "memberof": "BuiltinExternal/WebAPIExternal.js",
     "longname": "BuiltinExternal/WebAPIExternal.js~AudioContext",
     "access": null,
-    "description": null,
+    "description": "",
     "builtinExternal": true
   }
 ]

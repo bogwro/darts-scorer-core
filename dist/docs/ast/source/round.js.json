@@ -1,7 +1,7 @@
 {
   "type": "Program",
   "start": 0,
-  "end": 2908,
+  "end": 2907,
   "loc": {
     "start": {
       "line": 1,
@@ -106,7 +106,7 @@
     {
       "type": "ExportDefaultDeclaration",
       "start": 88,
-      "end": 2907,
+      "end": 2906,
       "loc": {
         "start": {
           "line": 8,
@@ -120,7 +120,7 @@
       "declaration": {
         "type": "ClassDeclaration",
         "start": 103,
-        "end": 2907,
+        "end": 2906,
         "loc": {
           "start": {
             "line": 8,
@@ -152,7 +152,7 @@
         "body": {
           "type": "ClassBody",
           "start": 115,
-          "end": 2907,
+          "end": 2906,
           "loc": {
             "start": {
               "line": 8,
@@ -3891,7 +3891,7 @@
             {
               "type": "MethodDefinition",
               "start": 2840,
-              "end": 2904,
+              "end": 2903,
               "loc": {
                 "start": {
                   "line": 133,
@@ -3925,7 +3925,7 @@
               "value": {
                 "type": "FunctionExpression",
                 "start": 2848,
-                "end": 2904,
+                "end": 2903,
                 "loc": {
                   "start": {
                     "line": 133,
@@ -3944,7 +3944,7 @@
                 "body": {
                   "type": "BlockStatement",
                   "start": 2851,
-                  "end": 2904,
+                  "end": 2903,
                   "loc": {
                     "start": {
                       "line": 133,
@@ -3959,7 +3959,7 @@
                     {
                       "type": "ReturnStatement",
                       "start": 2857,
-                      "end": 2900,
+                      "end": 2899,
                       "loc": {
                         "start": {
                           "line": 134,
@@ -3967,13 +3967,13 @@
                         },
                         "end": {
                           "line": 134,
-                          "column": 47
+                          "column": 46
                         }
                       },
                       "argument": {
                         "type": "CallExpression",
                         "start": 2864,
-                        "end": 2899,
+                        "end": 2898,
                         "loc": {
                           "start": {
                             "line": 134,
@@ -3981,13 +3981,13 @@
                           },
                           "end": {
                             "line": 134,
-                            "column": 46
+                            "column": 45
                           }
                         },
                         "callee": {
                           "type": "MemberExpression",
                           "start": 2864,
-                          "end": 2897,
+                          "end": 2893,
                           "loc": {
                             "start": {
                               "line": 134,
@@ -3995,7 +3995,7 @@
                             },
                             "end": {
                               "line": 134,
-                              "column": 44
+                              "column": 40
                             }
                           },
                           "object": {
@@ -4113,7 +4113,7 @@
                           "property": {
                             "type": "Identifier",
                             "start": 2889,
-                            "end": 2897,
+                            "end": 2893,
                             "loc": {
                               "start": {
                                 "line": 134,
@@ -4121,14 +4121,33 @@
                               },
                               "end": {
                                 "line": 134,
-                                "column": 44
+                                "column": 40
                               }
                             },
-                            "name": "toString"
+                            "name": "join"
                           },
                           "computed": false
                         },
-                        "arguments": []
+                        "arguments": [
+                          {
+                            "type": "Literal",
+                            "start": 2894,
+                            "end": 2897,
+                            "loc": {
+                              "start": {
+                                "line": 134,
+                                "column": 41
+                              },
+                              "end": {
+                                "line": 134,
+                                "column": 44
+                              }
+                            },
+                            "value": "-",
+                            "rawValue": "-",
+                            "raw": "'-'"
+                          }
+                        ]
                       }
                     }
                   ]

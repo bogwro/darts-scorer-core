@@ -1,10 +1,10 @@
 'use strict';
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _round = require('../round');
 
@@ -20,7 +20,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * @class DartsBaseGame
  */
 
-var DartsBaseGame = (function () {
+var DartsBaseGame = function () {
 
   /**
    * Initializes a new instance of the `DartsBaseGame` class.
@@ -60,11 +60,13 @@ var DartsBaseGame = (function () {
    * @returns {Throw} `Throw` instance.
    */
 
+
   /**
    * @static
    * @property {Object} defaultOptions
    * @property {Boolean} defaultOptions.isComputer
    */
+
 
   _createClass(DartsBaseGame, [{
     key: 'throw',
@@ -126,7 +128,7 @@ var DartsBaseGame = (function () {
   }, {
     key: 'nextRound',
     value: function nextRound() {
-      var round = undefined;
+      var round = void 0;
 
       var _iteratorNormalCompletion = true;
       var _didIteratorError = false;
@@ -213,6 +215,7 @@ var DartsBaseGame = (function () {
   }, {
     key: 'roundsByPlayer',
 
+
     /**
      * @param {Player} player Instance of the `Player`.
      * @returns {Round[]} Array of rounds.
@@ -281,7 +284,7 @@ var DartsBaseGame = (function () {
   }]);
 
   return DartsBaseGame;
-})();
+}();
 
 DartsBaseGame.defaultOptions = {
   round: {

@@ -1,10 +1,10 @@
 'use strict';
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _throw2 = require('./throw');
 
@@ -20,7 +20,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * @class Round
  */
 
-var Round = (function () {
+var Round = function () {
 
   /**
    * Initializes a new instance of the `Round` class.
@@ -55,14 +55,17 @@ var Round = (function () {
    * @returns {number} Number of throws per round.
    */
 
+
   /**
    * @property {Object} defaultOptions Default options
    * @property {number} defaultOptions.throwsPerRound The default number of throws per round.
    *
    */
 
+
   _createClass(Round, [{
     key: 'throw',
+
 
     /**
      * Represents single `throw`.
@@ -102,6 +105,7 @@ var Round = (function () {
   }, {
     key: 'clear',
 
+
     /**
      * Clear all throws for the round.
      */
@@ -115,6 +119,7 @@ var Round = (function () {
 
   }, {
     key: 'invalidate',
+
 
     /**
      * Invalidates whole round with specific `number` and `multiplier`.
@@ -139,7 +144,7 @@ var Round = (function () {
   }, {
     key: 'toString',
     value: function toString() {
-      return Array.from(this._throws).toString();
+      return Array.from(this._throws).join('-');
     }
   }, {
     key: 'size',
@@ -189,6 +194,6 @@ var Round = (function () {
   }]);
 
   return Round;
-})();
+}();
 
 exports.default = Round;

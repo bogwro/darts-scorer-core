@@ -396,6 +396,12 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "src/games/501.js~darts501game#getcheckouthint",
+    "class/src/games/501.js~Darts501Game.html#instance-method-getCheckoutHint",
+    "src/games/501.js~Darts501Game#getCheckoutHint",
+    "method"
+  ],
+  [
     "src/games/501.js~darts501game#getpointsbyplayer",
     "class/src/games/501.js~Darts501Game.html#instance-method-getPointsByPlayer",
     "src/games/501.js~Darts501Game#getPointsByPlayer",
@@ -529,13 +535,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/player.js~player#iscomputer",
-    "class/src/player.js~Player.html#instance-set-isComputer",
+    "class/src/player.js~Player.html#instance-get-isComputer",
     "src/player.js~Player#isComputer",
     "member"
   ],
   [
     "src/player.js~player#iscomputer",
-    "class/src/player.js~Player.html#instance-get-isComputer",
+    "class/src/player.js~Player.html#instance-set-isComputer",
     "src/player.js~Player#isComputer",
     "member"
   ],
@@ -649,25 +655,31 @@ window.esdocSearchIndex = [
   ],
   [
     "src/throw.js~throw#multiplier",
-    "class/src/throw.js~Throw.html#instance-set-multiplier",
-    "src/throw.js~Throw#multiplier",
-    "member"
-  ],
-  [
-    "src/throw.js~throw#multiplier",
     "class/src/throw.js~Throw.html#instance-get-multiplier",
     "src/throw.js~Throw#multiplier",
     "member"
   ],
   [
-    "src/throw.js~throw#number",
-    "class/src/throw.js~Throw.html#instance-set-number",
-    "src/throw.js~Throw#number",
+    "src/throw.js~throw#multiplier",
+    "class/src/throw.js~Throw.html#instance-set-multiplier",
+    "src/throw.js~Throw#multiplier",
+    "member"
+  ],
+  [
+    "src/throw.js~throw#multiplierasstring",
+    "class/src/throw.js~Throw.html#instance-get-multiplierAsString",
+    "src/throw.js~Throw#multiplierAsString",
     "member"
   ],
   [
     "src/throw.js~throw#number",
     "class/src/throw.js~Throw.html#instance-get-number",
+    "src/throw.js~Throw#number",
+    "member"
+  ],
+  [
+    "src/throw.js~throw#number",
+    "class/src/throw.js~Throw.html#instance-set-number",
     "src/throw.js~Throw#number",
     "member"
   ],
@@ -681,6 +693,12 @@ window.esdocSearchIndex = [
     "src/throw.js~throw.create",
     "class/src/throw.js~Throw.html#static-method-create",
     "src/throw.js~Throw.create",
+    "method"
+  ],
+  [
+    "src/throw.js~throw.fromstring",
+    "class/src/throw.js~Throw.html#static-method-fromString",
+    "src/throw.js~Throw.fromString",
     "method"
   ]
 ]
