@@ -546,6 +546,12 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "src/player.js~player#tostring",
+    "class/src/player.js~Player.html#instance-method-toString",
+    "src/player.js~Player#toString",
+    "method"
+  ],
+  [
     "src/round.js",
     "file/src/round.js.html",
     "src/round.js",
@@ -655,13 +661,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/throw.js~throw#multiplier",
-    "class/src/throw.js~Throw.html#instance-get-multiplier",
+    "class/src/throw.js~Throw.html#instance-set-multiplier",
     "src/throw.js~Throw#multiplier",
     "member"
   ],
   [
     "src/throw.js~throw#multiplier",
-    "class/src/throw.js~Throw.html#instance-set-multiplier",
+    "class/src/throw.js~Throw.html#instance-get-multiplier",
     "src/throw.js~Throw#multiplier",
     "member"
   ],
@@ -673,13 +679,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/throw.js~throw#number",
-    "class/src/throw.js~Throw.html#instance-get-number",
+    "class/src/throw.js~Throw.html#instance-set-number",
     "src/throw.js~Throw#number",
     "member"
   ],
   [
     "src/throw.js~throw#number",
-    "class/src/throw.js~Throw.html#instance-set-number",
+    "class/src/throw.js~Throw.html#instance-get-number",
     "src/throw.js~Throw#number",
     "member"
   ],

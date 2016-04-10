@@ -1,7 +1,7 @@
 {
   "coverage": "100%",
-  "expectCount": 56,
-  "actualCount": 56,
+  "expectCount": 57,
+  "actualCount": 57,
   "files": {
     "src/games/501.js": {
       "expectCount": 10,
@@ -14,8 +14,8 @@
       "undocumentLines": []
     },
     "src/player.js": {
-      "expectCount": 4,
-      "actualCount": 4,
+      "expectCount": 5,
+      "actualCount": 5,
       "undocumentLines": []
     },
     "src/round.js": {

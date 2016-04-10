@@ -24,8 +24,22 @@ var Player = function () {
    * @param {Object} [options={}] Options.
    *
    * @example
+   *
+   * Example 1
+   *
    * // Creating a new instance
    * var player1 = new Player({name: 'Player 1'});
+   *
+   * Example 2
+   *
+   * // You can pass any object that has defined toString() method:
+   * var playerObj = {
+   *   name: 'Ben',
+   *   toString() { return this.name; }
+   * };
+   *
+   * var player2 = new Player(playerObj);
+   *
    */
 
   function Player(user) {
@@ -62,6 +76,18 @@ var Player = function () {
 
 
   _createClass(Player, [{
+    key: "toString",
+
+
+    /**
+     * Returns string representation of Player instance
+     * 
+     * @returns {string} String representation
+     */
+    value: function toString() {
+      return this._user.toString();
+    }
+  }, {
     key: "isComputer",
     get: function get() {
       return this._options.isComputer;
