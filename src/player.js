@@ -21,8 +21,22 @@ export default class Player {
    * @param {Object} [options={}] Options.
    *
    * @example
+   *
+   * Example 1
+   *
    * // Creating a new instance
    * var player1 = new Player({name: 'Player 1'});
+   *
+   * Example 2
+   *
+   * // You can pass any object that has defined toString() method:
+   * var playerObj = {
+   *   name: 'Ben',
+   *   toString() { return this.name; }
+   * };
+   *
+   * var player2 = new Player(playerObj);
+   *
    */
   constructor(user, options = {}) {
     /**
@@ -50,6 +64,15 @@ export default class Player {
    */
   set isComputer(bool) {
     this._options.isComputer = bool;
+  }
+
+  /**
+   * Returns string representation of Player instance
+   * 
+   * @returns {string} String representation
+   */
+  toString() {
+    return this._user.toString();
   }
 
 }
