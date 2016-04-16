@@ -42,6 +42,27 @@ describe('Game "501"', () => {
     assert.strictEqual(game.currentRoundPoints, 171);
   });
 
+  it('calculates points per specific round', () => {
+    game = new Game([{}]);
+
+    let round1 = game.currentRound;
+
+    game.throw(10);
+    game.throw(10);
+    game.throw(10);
+
+    game.nextPlayer();
+
+    let round2 = game.currentRound;
+
+    game.throw(20);
+    game.throw(20);
+    game.throw(20);
+
+    assert.strictEqual(game.getPointsByRound(round1), 30);
+    assert.strictEqual(game.getPointsByRound(round2), 60);
+  });
+
   it('`currentPlayerTotalPoints`', () => {
     assert.strictEqual(game.currentPlayerTotalPoints, 501);
   });

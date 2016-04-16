@@ -132,10 +132,21 @@ export default class Darts501Game extends DartsBaseGame {
   }
 
   /**
+   * Calculates points for specific round.
+   *
+   * @param {Round} round Round instance.
+   * @returns {number} Points for round.
+   */
+  getPointsByRound(round) {
+    return Array.from(round.throws).reduce((prev, curr) =&gt; prev + curr.number * curr.multiplier, 0);
+
+  }
+
+  /**
    * @returns {number} Calculates points for `currentRound`
    */
   get currentRoundPoints() {
-    return Array.from(this.currentRound.throws).reduce((prev, curr) =&gt; prev + curr.number * curr.multiplier, 0);
+    return this.getPointsByRound(this.currentRound);
   }
 
   /**

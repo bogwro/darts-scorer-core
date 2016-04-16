@@ -1,6 +1,6 @@
 {
   "name": "darts-scorer-core",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Darts Scorer helps to manage multi-player games. It is written in the way that is framework agnostic.",
   "main": "dist/dartsScorerCore.min.js",
   "scripts": {

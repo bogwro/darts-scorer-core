@@ -1,11 +1,11 @@
 {
   "coverage": "100%",
-  "expectCount": 57,
-  "actualCount": 57,
+  "expectCount": 58,
+  "actualCount": 58,
   "files": {
     "src/games/501.js": {
-      "expectCount": 10,
-      "actualCount": 10,
+      "expectCount": 11,
+      "actualCount": 11,
       "undocumentLines": []
     },
     "src/games/dartsBaseGame.js": {

@@ -106,6 +106,21 @@ var Darts501Game = function (_DartsBaseGame) {
     }
 
     /**
+     * Calculates points for specific round.
+     *
+     * @param {Round} round Round instance.
+     * @returns {number} Points for round.
+     */
+
+  }, {
+    key: 'getPointsByRound',
+    value: function getPointsByRound(round) {
+      return Array.from(round.throws).reduce(function (prev, curr) {
+        return prev + curr.number * curr.multiplier;
+      }, 0);
+    }
+
+    /**
      * @returns {number} Calculates points for `currentRound`
      */
 
@@ -280,9 +295,7 @@ var Darts501Game = function (_DartsBaseGame) {
   }, {
     key: 'currentRoundPoints',
     get: function get() {
-      return Array.from(this.currentRound.throws).reduce(function (prev, curr) {
-        return prev + curr.number * curr.multiplier;
-      }, 0);
+      return this.getPointsByRound(this.currentRound);
     }
 
     /**

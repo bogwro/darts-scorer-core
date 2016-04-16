@@ -408,6 +408,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/games/501.js~darts501game#getpointsbyround",
+    "class/src/games/501.js~Darts501Game.html#instance-method-getPointsByRound",
+    "src/games/501.js~Darts501Game#getPointsByRound",
+    "method"
+  ],
+  [
     "src/games/501.js~darts501game#startingpoints",
     "class/src/games/501.js~Darts501Game.html#instance-get-startingPoints",
     "src/games/501.js~Darts501Game#startingPoints",
@@ -535,13 +541,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/player.js~player#iscomputer",
-    "class/src/player.js~Player.html#instance-get-isComputer",
+    "class/src/player.js~Player.html#instance-set-isComputer",
     "src/player.js~Player#isComputer",
     "member"
   ],
   [
     "src/player.js~player#iscomputer",
-    "class/src/player.js~Player.html#instance-set-isComputer",
+    "class/src/player.js~Player.html#instance-get-isComputer",
     "src/player.js~Player#isComputer",
     "member"
   ],
@@ -661,13 +667,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/throw.js~throw#multiplier",
-    "class/src/throw.js~Throw.html#instance-set-multiplier",
+    "class/src/throw.js~Throw.html#instance-get-multiplier",
     "src/throw.js~Throw#multiplier",
     "member"
   ],
   [
     "src/throw.js~throw#multiplier",
-    "class/src/throw.js~Throw.html#instance-get-multiplier",
+    "class/src/throw.js~Throw.html#instance-set-multiplier",
     "src/throw.js~Throw#multiplier",
     "member"
   ],
