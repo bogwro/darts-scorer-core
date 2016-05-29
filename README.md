@@ -12,6 +12,12 @@
 
 It is easy to extend to match own needs.
 
+Check-out [Online Playground](https://tonicdev.com/bogumil/darts-scorer-core)
+
+[Online Implementation](http://bogwro.github.io/darts-scorer-angular)
+
+[Implementation's Source Code](https://github.com/bogwro/darts-scorer-angular)
+
 ## Installation
 
 ```
@@ -20,9 +26,30 @@ npm install darts-scorer-core --save-dev
 
 ## Example Usage
 
-````javascript
-import dartsScorerCore from 'darts-scorer-core';
+Depends on the way how you want to use this library, 
+there are two ways of building dependency on it.
 
+* ES6
+
+```
+import dartsScorerCore from 'darts-scorer-core';
+```
+
+* Node / Browser
+
+
+
+```
+var dartsScorerCore = require("darts-scorer-core");
+
+// `default` is used by `webpack` to be ready for ES6
+// next line is not needed when used in workflow where `webpack` is being used
+dartsScorerCore = dartsScorerCore.default || dartsScorerCore;
+```
+
+The rest of the code follows ES6 notation:
+
+````javascript
 let player1 = new dartsScorerCore.Player('Player 1');
 let player2 = new dartsScorerCore.Player('Player 2');
 
@@ -55,6 +82,54 @@ Requires node `^5.0.0`.
 ```
 npm install 
 ```
+
+### QA
+
+Run tests & coverage report during development
+
+```
+npm run test:all
+```
+
+### Manage files
+
+Use `terminal` to manage files using git commands, for example:
+
+```
+git status
+git add .
+```
+
+Use dedicated script to commit changes to git repository:
+
+```
+npm run commit
+```
+
+Push changes to the server:
+
+```
+git push origin master
+```
+
+> Check status of the [build](https://travis-ci.org/bogwro/darts-scorer-core)
+
+
+When the build is successful and there is at least one bug fix or new feature that is committed since last release than there should be a new [npm release](https://www.npmjs.com/package/darts-scorer-core) as well as new tag and release on [GitHub](https://github.com/bogwro/darts-scorer-core/releases)
+
+### Upgrade Node version
+
+```
+nvm install stable && nvm current > .nvmrc
+```
+
+### Upgrade packages
+
+```
+npm run upgrade-packages
+```
+
+Test the app before committing
 
 ## License
 
